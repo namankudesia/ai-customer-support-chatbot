@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AI Customer Support Chatbot — Live Demo | Naman Kudesia</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:#0A0A1A;color:#F0EEFF;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:40px 20px;}
+.badge{background:rgba(0,191,165,.1);border:1px solid rgba(0,191,165,.3);color:#00BFA5;padding:6px 16px;border-radius:50px;font-size:12px;font-family:monospace;margin-bottom:20px;}
+h1{font-size:28px;margin-bottom:8px;background:linear-gradient(135deg,#6B5EFF,#00BFA5);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.sub{color:#9090BB;margin-bottom:30px;text-align:center;max-width:500px;font-size:14px;}
+.box{background:#14112E;border:1px solid rgba(155,143,255,.15);border-radius:20px;width:100%;max-width:600px;overflow:hidden;box-shadow:0 20px 60px rgba(107,94,255,.2);}
+.bar{padding:14px 18px;background:#1C1840;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(155,143,255,.15);}
+.dot{width:10px;height:10px;border-radius:50%;}
+.msgs{height:380px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.m{display:flex;gap:10px;}
+.mu{flex-direction:row-reverse;}
+.av{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.av-ai{background:linear-gradient(135deg,#6B5EFF,#00BFA5);}
+.av-u{background:#2A2555;}
+.bub{max-width:75%;padding:11px 15px;border-radius:14px;font-size:13px;line-height:1.6;}
+.bub-ai{background:#1C1840;border:1px solid rgba(155,143,255,.15);}
+.bub-u{background:linear-gradient(135deg,#6B5EFF,#00BFA5);color:#fff;}
+.input-row{display:flex;gap:8px;padding:14px;border-top:1px solid rgba(155,143,255,.15);background:#1C1840;}
+input{flex:1;background:#14112E;border:1px solid rgba(155,143,255,.25);border-radius:8px;padding:10px 14px;color:#fff;font-size:13px;outline:none;}
+button{background:linear-gradient(135deg,#6B5EFF,#00BFA5);border:none;border-radius:8px;width:38px;color:#fff;cursor:pointer;font-size:16px;}
+.note{margin-top:24px;font-size:12px;color:#5A5580;text-align:center;max-width:480px;line-height:1.6;}
+.links{display:flex;gap:12px;margin-top:20px;}
+.lnk{padding:8px 18px;border-radius:50px;border:1px solid rgba(155,143,255,.3);color:#9B91FF;text-decoration:none;font-size:12px;font-family:monospace;}
+</style>
+</head>
+<body>
+<div class="badge">● LIVE DEMO</div>
+<h1>AI Customer Support Chatbot</h1>
+<p class="sub">RAG-powered chatbot built with LangChain + GPT-4 + FAISS by Naman Kudesia. This demo runs entirely in your browser using rule-based responses simulating the full architecture.</p>
+<div class="box">
+  <div class="bar">
+    <div class="dot" style="background:#FF5F57"></div><div class="dot" style="background:#FEBC2E"></div><div class="dot" style="background:#28C840"></div>
+    <span style="margin-left:10px;font-size:12px;color:#9090BB;">support-bot.py</span>
+  </div>
+  <div class="msgs" id="msgs">
+    <div class="m"><div class="av av-ai">AI</div><div class="bub bub-ai">Hi! I'm a demo of the RAG chatbot Naman built. Try asking about "refund policy", "shipping", or "password reset"!</div></div>
+  </div>
+  <div class="input-row">
+    <input id="inp" placeholder="Ask something..." onkeydown="if(event.key==='Enter')send()">
+    <button onclick="send()">↑</button>
+  </div>
+</div>
+<p class="note">This is a simplified browser demo. The real production system uses FAISS vector search, Redis session memory, and GPT-4 reasoning — full source code linked below.</p>
+<div class="links">
+  <a class="lnk" href="https://github.com/namankudesia/ai-customer-support-chatbot" target="_blank">View Source Code →</a>
+  <a class="lnk" href="https://namankudesia.github.io" target="_blank">← Back to Portfolio</a>
+</div>
+<script>
+const KB={
+  "refund":"Our refund policy allows returns within 30 days of purchase with original receipt. Refunds are processed within 5-7 business days.",
+  "shipping":"Standard shipping takes 3-5 business days. Express shipping (1-2 days) is available at checkout for an additional fee.",
+  "password":"To reset your password: go to Settings → Security → Reset Password. A reset link will be sent to your registered email.",
+  "hours":"Our support team is available Monday-Saturday, 9 AM to 7 PM IST. You can also reach us via email anytime.",
+  "default":"I don't have specific information on that in my knowledge base, but in the real implementation, this would trigger a FAISS vector search across the full document store to find the most relevant answer."
+};
+function send(){
+  const inp=document.getElementById('inp');const q=inp.value.trim();if(!q)return;inp.value='';
+  addMsg(q,'u');
+  setTimeout(()=>{
+    const l=q.toLowerCase();
+    let r=KB.default;
+    for(const k in KB){if(l.includes(k)){r=KB[k];break;}}
+    addMsg(r,'ai');
+  },600);
+}
+function addMsg(t,role){
+  const m=document.getElementById('msgs');
+  const d=document.createElement('div');d.className='m'+(role==='u'?' mu':'');
+  d.innerHTML=`<div class="av av-${role}">${role==='ai'?'AI':'You'}</div><div class="bub bub-${role}">${t}</div>`;
+  m.appendChild(d);m.scrollTop=m.scrollHeight;
+}
+</script>
+</body>
+</html>
